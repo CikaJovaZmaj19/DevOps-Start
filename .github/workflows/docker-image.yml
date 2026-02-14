@@ -20,8 +20,8 @@ jobs:
         username: ${{ secrets.AZURE_REGISTRY_USERNAME }}
         password: ${{ secrets.AZURE_REGISTRY_PASSWORD }}
 
-    - name: Build and Push the Docker image
+    - name: Build and Push the Docker Image
       run: |
-        docker build . --file Dockerfile --tag ${{ secrets.ACR_LOGIN_SERVER }}/moj-image-name:latest
-        docker push ${{ secrets.ACR_LOGIN_SERVER }}/moj-image-name:latest
+        docker build . --file Dockerfile --tag ${{ secrets.AZURE_REGISTRY_SERVER }}/my-image-name:latest
+        docker push ${{ secrets.AZURE_REGISTRY_SERVER }}/my-image-name:latest
         
