@@ -7,12 +7,21 @@ on:
     branches: [ "main" ]
 
 jobs:
-
-  build:
-
+  build-and-push:
     runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v4
-    - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag my-image-name:$(date +%s) 
+
+    - name: Azure Container Registry Login
+      uses: Azure/docker-login@v1
+      with:
+        login-server: ${{ secrets.ACR_LOGIN_SERVER }}
+        username: ${{ secrets.ACR_USERNAME }}
+        password: ${{ secrets.ACR_PASSWORD }}
+
+    - name: Build and Push the Docker image
+      run: |
+        docker build . --file Dockerfile --tag ${{ secrets.ACR_LOGIN_SERVER }}/moj-image-name:latest
+        docker push ${{ secrets.ACR_LOGIN_SERVER }}/moj-image-name:latest
+        
