@@ -83,6 +83,7 @@ resource "azurerm_lb_probe" "hp" {
   protocol        = "Http"
   request_path    = "/"
   interval_in_seconds = 15
+  number_of_probes    = 2
 }
 
 resource "azurerm_lb_rule" "lb_rule" {

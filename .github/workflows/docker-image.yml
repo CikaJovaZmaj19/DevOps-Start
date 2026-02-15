@@ -51,3 +51,11 @@ jobs:
           ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
           ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
           ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+
+      - name: Smoke Test Load Balancer
+        run: |
+          LB_IP=$(terraform output -raw load_balancer_ip)
+          echo "Testing $LB_IP..."
+          timeout 120s bash -c "until curl -sSf http://$LB_IP; do sleep 5; done"
+        working-directory: ./terraform
+
