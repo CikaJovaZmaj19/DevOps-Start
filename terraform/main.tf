@@ -76,16 +76,6 @@ resource "azurerm_lb_backend_address_pool" "backend_pool" {
   name            = "AciBackendPool"
 }
 
-resource "azurerm_lb_probe" "hp" {
-  loadbalancer_id = azurerm_lb.my_lb.id
-  name            = "http-running-probe"
-  port            = 5000
-  protocol        = "Http"
-  request_path    = "/"
-  interval_in_seconds = 15
-  number_of_probes    = 2
-}
-
 resource "azurerm_lb_rule" "lb_rule" {
   loadbalancer_id                = azurerm_lb.my_lb.id
   name                           = "HTTP-Rule"
@@ -94,7 +84,6 @@ resource "azurerm_lb_rule" "lb_rule" {
   backend_port                   = 5000
   frontend_ip_configuration_name = "PublicIPAddress"
   backend_address_pool_ids       = [azurerm_lb_backend_address_pool.backend_pool.id]
-  probe_id                       = azurerm_lb_probe.hp.id
 }
 
 resource "azurerm_log_analytics_workspace" "logs" {
@@ -146,8 +135,6 @@ resource "azurerm_lb_backend_address_pool_address" "app_address" {
   backend_address_pool_id = azurerm_lb_backend_address_pool.backend_pool.id
   virtual_network_id      = azurerm_virtual_network.vnet.id
   ip_address              = azurerm_container_group.my_app[count.index].ip_address
-
-  depends_on = [azurerm_container_group.my_app]
 }
 
 resource "azurerm_monitor_action_group" "main" {
