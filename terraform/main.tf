@@ -29,6 +29,11 @@ resource "azurerm_resource_group" "my_rg" {
   location = "polandcentral"
 }
 
+resource "azurerm_resource_group" "my_rg" {
+  name     = "DevOps-Start"
+  location = "polandcentral"
+}
+
 resource "azurerm_virtual_network" "vnet" {
   name                = "devops-vnet"
   address_space       = ["10.0.0.0/16"]
@@ -135,38 +140,6 @@ resource "azurerm_lb_backend_address_pool_address" "app_address" {
   backend_address_pool_id = azurerm_lb_backend_address_pool.backend_pool.id
   virtual_network_id      = azurerm_virtual_network.vnet.id
   ip_address              = azurerm_container_group.my_app[count.index].ip_address
-
-  depends_on = [azurerm_container_group.my_app]
-}
-
-resource "azurerm_monitor_action_group" "main" {
-  name                = "CriticalAlerts"
-  resource_group_name = azurerm_resource_group.my_rg.name
-  short_name          = "prio1"
-
-  email_receiver {
-    name          = "send-to-admin"
-    email_address = "markojova19@gmail.com"
-  }
-}
-
-resource "azurerm_monitor_metric_alert" "lb_alert" {
-  name                = "LB-Health-Alert"
-  resource_group_name = azurerm_resource_group.my_rg.name
-  scopes              = [azurerm_lb.my_lb.id]
-  severity            = 0
-
-  criteria {
-    metric_namespace = "Microsoft.Network/loadBalancers"
-    metric_name      = "DipAvailability"
-    aggregation      = "Average"
-    operator         = "LessThan"
-    threshold        = 50
-  }
-
-  action {
-    action_group_id = azurerm_monitor_action_group.main.id
-  }
 }
 
 output "load_balancer_ip" {
