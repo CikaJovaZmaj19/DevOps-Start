@@ -24,6 +24,11 @@ variable "container_image_tag" {
   default     = "latest"
 }
 
+variable "registry_password" {
+  type      = string
+  sensitive = true
+}
+
 import {
   to = azurerm_resource_group.my_rg
   id = "/subscriptions/739e9297-8a8a-4dff-8083-f1f2a25d4900/resourceGroups/DevOps-Start"
@@ -123,7 +128,7 @@ resource "azurerm_container_group" "my_app" {
   image_registry_credential {
     server   = "devops2026.azurecr.io"
     username = "devops2026"
-    password = "EhhDpP13Jny8bmWRWHkqSkx9G41Vq3fNijfpV50mrwH5YrgUX4lcJQQJ99CBACE1PydEqg7NAAACAZCRDvqj"
+    password = var.registry_password
   }
 
   diagnostics {

@@ -44,7 +44,7 @@ jobs:
           ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
 
       - name: Terraform Apply
-        run: terraform apply -auto-approve -var="container_image_tag=${{ github.sha }}"
+        run: terraform apply -auto-approve -var="container_image_tag=${{ github.sha }}" -var="registry_password=${{ secrets.AZURE_REGISTRY_PASSWORD }}"
         working-directory: ./terraform
         env:
           ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
