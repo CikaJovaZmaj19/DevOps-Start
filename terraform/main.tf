@@ -1,3 +1,9 @@
+variable "container_image_tag" {
+  type        = string
+  description = "Tag from GitHub Actions"
+  default     = "latest"
+}
+
 terraform {
   backend "azurerm" {
     resource_group_name  = "DevOps-Start"
@@ -22,11 +28,6 @@ resource "azurerm_resource_group" "my_rg" {
   name     = "DevOps-Start"
   location = "polandcentral"
 }
-
-/* import {
-  to = azurerm_resource_group.my_rg
-  id = "/subscriptions/739e9297-8a8a-4dff-8083-f1f2a25d4900/resourceGroups/DevOps-Start"
-} */
 
 resource "azurerm_virtual_network" "vnet" {
   name                = "devops-vnet"
@@ -96,7 +97,7 @@ resource "azurerm_container_group" "my_app" {
 
   container {
     name   = "web-app"
-    image  = "devops2026.azurecr.io/my-image-name:latest"
+    image  = "devops2026.azurecr.io/my-image-name:${var.container_image_tag}"
     cpu    = "0.5"
     memory = "1.5"
 
