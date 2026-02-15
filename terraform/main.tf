@@ -47,3 +47,8 @@ resource "azurerm_container_group" "my_app" {
     password = "EhhDpP13Jny8bmWRWHkqSkx9G41Vq3fNijfpV50mrwH5YrgUX4lcJQQJ99CBACE1PydEqg7NAAACAZCRDvqj"
   }
 }
+
+import {
+  to = azurerm_container_group.my_app
+  id = "/subscriptions/739e9297-8a8a-4dff-8083-f1f2a25d4900/resourceGroups/DevOps-Start/providers/Microsoft.ContainerInstance/containerGroups/devops-server"
+}
