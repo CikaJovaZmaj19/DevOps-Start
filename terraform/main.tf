@@ -1,9 +1,3 @@
-variable "container_image_tag" {
-  type        = string
-  description = "Tag from GitHub Actions"
-  default     = "latest"
-}
-
 terraform {
   backend "azurerm" {
     resource_group_name  = "DevOps-Start"
@@ -22,6 +16,12 @@ terraform {
 
 provider "azurerm" {
   features {}
+}
+
+variable "container_image_tag" {
+  type        = string
+  description = "Tag from GitHub Actions"
+  default     = "latest"
 }
 
 resource "azurerm_resource_group" "my_rg" {
@@ -86,6 +86,14 @@ resource "azurerm_lb_rule" "lb_rule" {
   backend_address_pool_ids       = [azurerm_lb_backend_address_pool.backend_pool.id]
 }
 
+resource "azurerm_log_analytics_workspace" "logs" {
+  name                = "devops-logs-workspace"
+  location            = azurerm_resource_group.my_rg.location
+  resource_group_name = azurerm_resource_group.my_rg.name
+  sku                 = "PerGB2018"
+  retention_in_days   = 30
+}
+
 resource "azurerm_container_group" "my_app" {
   count               = 2
   name                = "devops-server-${count.index}"
@@ -112,6 +120,13 @@ resource "azurerm_container_group" "my_app" {
     username = "devops2026"
     password = "EhhDpP13Jny8bmWRWHkqSkx9G41Vq3fNijfpV50mrwH5YrgUX4lcJQQJ99CBACE1PydEqg7NAAACAZCRDvqj"
   }
+
+  diagnostics {
+    log_analytics {
+      workspace_id  = azurerm_log_analytics_workspace.logs.workspace_id
+      workspace_key = azurerm_log_analytics_workspace.logs.primary_shared_key
+    }
+  }
 }
 
 resource "azurerm_lb_backend_address_pool_address" "app_address" {
@@ -120,6 +135,36 @@ resource "azurerm_lb_backend_address_pool_address" "app_address" {
   backend_address_pool_id = azurerm_lb_backend_address_pool.backend_pool.id
   virtual_network_id      = azurerm_virtual_network.vnet.id
   ip_address              = azurerm_container_group.my_app[count.index].ip_address
+}
+
+resource "azurerm_monitor_action_group" "main" {
+  name                = "CriticalAlerts"
+  resource_group_name = azurerm_resource_group.my_rg.name
+  short_name          = "prio1"
+
+  email_receiver {
+    name          = "send-to-admin"
+    email_address = "markojova19@gmail.com"
+  }
+}
+
+resource "azurerm_monitor_metric_alert" "lb_alert" {
+  name                = "LB-Health-Alert"
+  resource_group_name = azurerm_resource_group.my_rg.name
+  scopes              = [azurerm_lb.my_lb.id]
+  severity            = 0
+
+  criteria {
+    metric_namespace = "Microsoft.Network/loadBalancers"
+    metric_name      = "DipAvailability"
+    aggregation      = "Average"
+    operator         = "LessThan"
+    threshold        = 50
+  }
+
+  action {
+    action_group_id = azurerm_monitor_action_group.main.id
+  }
 }
 
 output "load_balancer_ip" {
