@@ -1,4 +1,4 @@
-name: CI/CD GitHub Automation
+name: CI/CD GitHub
 
 on:
   push:
