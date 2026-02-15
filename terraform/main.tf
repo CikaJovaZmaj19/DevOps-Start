@@ -16,6 +16,11 @@ resource "azurerm_resource_group" "my_rg" {
   location = "polandcentral"
 }
 
+import {
+  to = azurerm_resource_group.my_rg
+  id = "/subscriptions/739e9297-8a8a-4dff-8083-f1f2a25d4900/resourceGroups/DevOps-Start"
+}
+
 resource "azurerm_container_group" "my_app" {
   name                = "devops-server"
   location            = azurerm_resource_group.my_rg.location
