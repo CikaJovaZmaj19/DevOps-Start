@@ -23,7 +23,7 @@ jobs:
     - name: Build and Push the Docker Image
       run: |
         docker build . --file Dockerfile --tag ${{ secrets.AZURE_REGISTRY_SERVER }}/my-image-name:${{ github.sha }}
-        docker push ${{ secrets.AZURE_REGISTRY_SERVER }}/my-image-name:latest
+        docker push ${{ secrets.AZURE_REGISTRY_SERVER }}/my-image-name:${{ github.sha }}
         
   terraform-deploy:
     needs: build-and-push
