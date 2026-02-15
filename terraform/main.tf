@@ -135,6 +135,8 @@ resource "azurerm_lb_backend_address_pool_address" "app_address" {
   backend_address_pool_id = azurerm_lb_backend_address_pool.backend_pool.id
   virtual_network_id      = azurerm_virtual_network.vnet.id
   ip_address              = azurerm_container_group.my_app[count.index].ip_address
+
+  depends_on = [azurerm_container_group.my_app]
 }
 
 resource "azurerm_monitor_action_group" "main" {
