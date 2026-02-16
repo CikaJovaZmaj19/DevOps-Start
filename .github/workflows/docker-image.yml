@@ -1,4 +1,4 @@
-name: CI/CD GitHub Actions
+name: CI/CD GitHub Actions - Automatization
 
 on:
   push:
