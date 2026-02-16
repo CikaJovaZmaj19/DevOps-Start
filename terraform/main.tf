@@ -93,7 +93,7 @@ resource "azurerm_role_assignment" "aks_acr_pull" {
 
 resource "helm_release" "nginx_ingress" {
   name             = "ingress-nginx"
-  repository       = "https://kubernetes.github.io"
+  repository       = "https://kubernetes.github.io/ingress-nginx"
   chart            = "ingress-nginx"
   namespace        = "ingress-basic"
   create_namespace = true
@@ -102,7 +102,7 @@ resource "helm_release" "nginx_ingress" {
 
 resource "helm_release" "argocd" {
   name             = "argocd"
-  repository       = "https://argoproj.github.io"
+  repository       = "https://argoproj.github.io/argo-helm"
   chart            = "argo-cd"
   namespace        = "argocd"
   create_namespace = true
