@@ -1,4 +1,4 @@
-name: Automatization - CI/CD - GitHub Actions
+name: CI/CD Pipeline
 
 on:
   push:
@@ -7,6 +7,8 @@ on:
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
+    outputs:
+      image_tag: ${{ github.sha }}
     steps:
     - uses: actions/checkout@v4
 
@@ -19,8 +21,8 @@ jobs:
 
     - name: Build and Push the Docker Image
       run: |
-        docker build . --file Dockerfile --tag ${{ secrets.AZURE_REGISTRY_SERVER }}/my-image-name:${{ github.sha }}
-        docker push ${{ secrets.AZURE_REGISTRY_SERVER }}/my-image-name:${{ github.sha }}
+        docker build . --file Dockerfile --tag ${{ secrets.AZURE_REGISTRY_SERVER }}/web-app:${{ github.sha }}
+        docker push ${{ secrets.AZURE_REGISTRY_SERVER }}/web-app:${{ github.sha }}
         
   terraform-infrastructure:
     needs: build-and-push
@@ -41,7 +43,7 @@ jobs:
           ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
 
   kubernetes-deploy:
-    needs: terraform-infrastructure
+    needs: [build-and-push, terraform-infrastructure]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -54,7 +56,9 @@ jobs:
       - name: Get AKS Credentials
         run: az aks get-credentials --resource-group DevOps-Start --name devops-aks-cluster
 
-      - name: Deploy to Kubernetes
+      - name: Deploy with Helm
         run: |
-          kubectl create deployment web-app --image=${{ secrets.AZURE_REGISTRY_SERVER }}/my-image-name:${{ github.sha }} --dry-run=client -o yaml | kubectl apply -f -
-          kubectl expose deployment web-app --type=LoadBalancer --port=80 --target-port=5000 --dry-run=client -o yaml | kubectl apply -f -
+          helm upgrade --install web-app ./charts/web-app \
+            --set image.repository=${{ secrets.AZURE_REGISTRY_SERVER }}/web-app \
+            --set image.tag=${{ github.sha }} \
+            --namespace default

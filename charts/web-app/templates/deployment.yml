@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}
+    spec:
+      containers:
+      - name: {{ .Chart.Name }}
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        ports:
+          - containerPort: {{ .Values.service.targetPort }}
+        resources:
+          {{- toYaml .Values.resources | nindent 10 }}
+        livenessProbe:
+          httpGet:
+            path: {{ .Values.probes.path }}
+            port: {{ .Values.service.targetPort }}
+          initialDelaySeconds: {{ .Values.probes.initialDelaySeconds }}
+          periodSeconds: {{ .Values.probes.periodSeconds }}
+        readinessProbe:
+          httpGet:
+            path: {{ .Values.probes.path }}
+            port: {{ .Values.service.targetPort }}
