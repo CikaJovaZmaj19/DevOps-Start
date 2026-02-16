@@ -29,9 +29,14 @@ variable "registry_password" {
   sensitive = true
 }
 
+variable "subscription_id" {
+  type      = string
+  sensitive = true
+}
+
 import {
   to = azurerm_resource_group.my_rg
-  id = "/subscriptions/739e9297-8a8a-4dff-8083-f1f2a25d4900/resourceGroups/DevOps-Start"
+  id = "/subscriptions/var.subscription_id/resourceGroups/DevOps-Start"
 }
 
 resource "azurerm_resource_group" "my_rg" {
