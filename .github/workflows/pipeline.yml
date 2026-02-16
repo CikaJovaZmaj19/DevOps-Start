@@ -56,11 +56,6 @@ jobs:
       - name: Get AKS Credentials
         run: az aks get-credentials --resource-group DevOps-Start --name devops-aks-cluster
 
-      - name: Debug paths
-        run: |
-          pwd
-          ls -R
-
       - name: Deploy with Helm
         run: |
           helm upgrade --install web-app ./charts/web-app \
