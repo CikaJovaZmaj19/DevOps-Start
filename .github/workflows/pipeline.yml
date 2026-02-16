@@ -41,24 +41,3 @@ jobs:
           ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
           ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
           ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
-
-  kubernetes-deploy:
-    needs: [build-and-push, terraform-infrastructure]
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Azure Login
-        uses: azure/login@v1
-        with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
-
-      - name: Get AKS Credentials
-        run: az aks get-credentials --resource-group DevOps-Start --name devops-aks-cluster
-
-      - name: Deploy with Helm
-        run: |
-          helm upgrade --install web-app ./charts/web-app \
-            --set image.repository=${{ secrets.AZURE_REGISTRY_SERVER }}/web-app \
-            --set image.tag=${{ github.sha }} \
-            --namespace default

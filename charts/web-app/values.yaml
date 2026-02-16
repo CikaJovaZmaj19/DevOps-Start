@@ -1,14 +1,19 @@
 replicaCount: 2
 
 image:
-  repository: my-image-name
+  repository: devops2026.azurecr.io/web-app
   tag: latest
   pullPolicy: IfNotPresent
 
 service:
-  type: LoadBalancer
+  type: ClusterIP
   port: 80
   targetPort: 5000
+
+ingress:
+  enabled: true
+  className: nginx
+  host: web-app.nip.io
 
 resources:
   limits:
