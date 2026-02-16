@@ -2,14 +2,11 @@ name: CI/CD GitHub
 
 on:
   push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+    branches: [ "devops-no-k8s" ]
 
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v4
 
@@ -20,7 +17,7 @@ jobs:
         username: ${{ secrets.AZURE_REGISTRY_USERNAME }}
         password: ${{ secrets.AZURE_REGISTRY_PASSWORD }}
 
-    - name: Build and Push the Docker Image
+    - name: Build and Push
       run: |
         docker build . --file Dockerfile --tag ${{ secrets.AZURE_REGISTRY_SERVER }}/my-image-name:${{ github.sha }}
         docker push ${{ secrets.AZURE_REGISTRY_SERVER }}/my-image-name:${{ github.sha }}
@@ -29,22 +26,13 @@ jobs:
     needs: build-and-push
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: checkout@v4
+      - uses: hashicorp/setup-terraform@v3
 
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v3
-
-      - name: Terraform Init
-        run: terraform init
-        working-directory: ./terraform
-        env:
-          ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
-          ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
-          ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-          ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
-
-      - name: Terraform Apply
-        run: terraform apply -auto-approve -var="container_image_tag=${{ github.sha }}" -var="registry_password=${{ secrets.AZURE_REGISTRY_PASSWORD }}" -var="subscription_id=${{ secrets.AZURE_SUBSCRIPTION_ID }}"
+      - name: Terraform Init & Apply
+        run: |
+          terraform init
+          terraform apply -auto-approve -var="container_image_tag=${{ github.sha }}" -var="registry_password=${{ secrets.AZURE_REGISTRY_PASSWORD }}" -var="subscription_id=${{ secrets.AZURE_SUBSCRIPTION_ID }}"
         working-directory: ./terraform
         env:
           ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}

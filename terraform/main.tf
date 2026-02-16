@@ -36,7 +36,7 @@ variable "subscription_id" {
 
 import {
   to = azurerm_resource_group.my_rg
-  id = "/subscriptions/var.subscription_id/resourceGroups/DevOps-Start"
+  id = "/subscriptions/${var.subscription_id}/resourceGroups/DevOps-Start"
 }
 
 resource "azurerm_resource_group" "my_rg" {
