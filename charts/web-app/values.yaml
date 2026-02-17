@@ -13,7 +13,7 @@ service:
 ingress:
   enabled: true
   className: nginx
-  host: web-app.nip.io
+  host: 74.248.73.59.nip.io
 
 resources:
   limits:
