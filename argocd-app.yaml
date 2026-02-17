@@ -6,7 +6,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com
+    repoURL: https://github.com/CikaJovaZmaj19/DevOps-Start
     targetRevision: HEAD
     path: charts/web-app
     helm:
@@ -19,3 +19,5 @@ spec:
     automated:
       prune: true
       selfHeal: true
+      syncOptions:
+      - CreateNamespace=true  
