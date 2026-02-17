@@ -50,4 +50,4 @@ jobs:
       - name: Set AKS Context and Apply K8s Manifests
         run: |
           az aks get-credentials --resource-group DevOps-Start --name devops-aks-cluster
-          kubectl apply -f application.yaml
+          kubectl apply -f argocd-app.yaml
