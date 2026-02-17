@@ -2,7 +2,7 @@ replicaCount: 2
 
 image:
   repository: devops2026.azurecr.io/web-app
-  tag: latest
+  tag: tag # tag will be overwritten with github.sha
   pullPolicy: IfNotPresent
 
 service:
