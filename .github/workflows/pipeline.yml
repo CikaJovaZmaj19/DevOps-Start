@@ -42,6 +42,10 @@ jobs:
           ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
           ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
 
+      - name: Update Image Tag in values.yaml
+        run: |
+          sed -i "s/tag: .*/tag: ${{ github.sha }}/" charts/web-app/values.yaml
+
       - name: Azure Login
         uses: azure/login@v2
         with:
