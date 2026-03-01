@@ -120,7 +120,7 @@ resource "azurerm_container_group" "my_app" {
 
   container {
     name   = "web-app"
-    image  = "devops2026.azurecr.io/my-image-name:${var.container_image_tag}"
+    image  = "devops2026simon.azurecr.io/my-image-name:${var.container_image_tag}"
     cpu    = "0.5"
     memory = "1.5"
 
@@ -131,8 +131,8 @@ resource "azurerm_container_group" "my_app" {
   }
 
   image_registry_credential {
-    server   = "devops2026.azurecr.io"
-    username = "devops2026"
+    server   = "devops2026simon.azurecr.io"
+    username = "devops2026simon"
     password = var.registry_password
   }
 
