@@ -39,6 +39,12 @@ import {
   id = "/subscriptions/${var.subscription_id}/resourceGroups/DevOps-Start"
 }
 
+import {
+  to = azurerm_storage_account.devopsstorage2026
+  id = "/subscriptions/${var.subscription_id}/resourceGroups/DevOps-Start/providers/Microsoft.Storage/storageAccounts/devopsstorage2026"
+}
+
+
 resource "azurerm_resource_group" "my_rg" {
   name     = "DevOps-Start"
   location = "polandcentral"
